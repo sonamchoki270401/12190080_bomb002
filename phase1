@@ -1,0 +1,87 @@
+gdb bomb //open bomb in GNU debugger
+chmod 777 bomb //setting permission of file into readable, writeable and executable by all user
+
+set up break point:
+(gdb) break phase_1
+Breakpoint 1 at 0x400e8d
+(gdb) break explode_bomb
+Breakpoint 2 at 0x401438
+(gdb) run
+Starting program: /home/Desktop/Sonam Choki/Desktop/Assignment 1/bomb002/bomb
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+hello //test answer
+
+Breakpoint 1, 0x0000000000400e8d in phase_1 ()
+(gdb) disas
+Dump of assembler code for function phase_1:
+=> 0x0000000000400e8d <+0>:     sub    $0x8,%rsp 
+   0x0000000000400e91 <+4>:     mov    $0x4023cc,%esi //moving source to destination
+   0x0000000000400e96 <+9>:     callq  0x401339 <strings_not_equal> //allows to know that input is string
+   0x0000000000400e9b <+14>:    test   %eax,%eax //compare input with system answer
+   0x0000000000400e9d <+16>:    je     0x400ea4 <phase_1+23>
+   0x0000000000400e9f <+18>:    callq  0x401438 <explode_bomb>
+   0x0000000000400ea4 <+23>:    add    $0x8,%rsp
+   0x0000000000400ea8 <+27>:    retq
+End of assembler dump.
+
+Let's compare our input (hello) with system answer:
+
+(gdb) ni
+0x0000000000400e91 in phase_1 ()
+(gdb) ni
+0x0000000000400e96 in phase_1 ()
+(gdb) ni
+0x0000000000400e9b in phase_1 ()
+(gdb) disas
+Dump of assembler code for function phase_1:
+   0x0000000000400e8d <+0>:     sub    $0x8,%rsp
+   0x0000000000400e91 <+4>:     mov    $0x4023cc,%esi
+   0x0000000000400e96 <+9>:     callq  0x401339 <strings_not_equal>
+=> 0x0000000000400e9b <+14>:    test   %eax,%eax  
+   0x0000000000400e9d <+16>:    je     0x400ea4 <phase_1+23>
+   0x0000000000400e9f <+18>:    callq  0x401438 <explode_bomb>
+   0x0000000000400ea4 <+23>:    add    $0x8,%rsp
+   0x0000000000400ea8 <+27>:    retq
+End of assembler dump.
+(gdb) ni
+0x0000000000400e9d in phase_1 ()
+(gdb) ni
+0x0000000000400e9f in phase_1 ()
+Since the input given do not match with system answer so it will callq  0x401438 <explode_bomb>
+(gdb) disas
+Dump of assembler code for function phase_1:
+   0x0000000000400e8d <+0>:     sub    $0x8,%rsp
+   0x0000000000400e91 <+4>:     mov    $0x4023cc,%esi
+   0x0000000000400e96 <+9>:     callq  0x401339 <strings_not_equal>
+   0x0000000000400e9b <+14>:    test   %eax,%eax
+   0x0000000000400e9d <+16>:    je     0x400ea4 <phase_1+23>
+=> 0x0000000000400e9f <+18>:    callq  0x401438 <explode_bomb>
+   0x0000000000400ea4 <+23>:    add    $0x8,%rsp
+   0x0000000000400ea8 <+27>:    retq
+End of assembler dump.
+(gdb) ni
+
+Breakpoint 2, 0x0000000000401438 in explode_bomb ()
+
+Lets examine what is being moved from address 0x4024bc. We know it has to be a string of some sort so we use '/s':
+(gdb) x/s 0x4023cc
+0x4023cc:       "Public speaking is very easy." 
+
+Now, delete all the break points set in phase_1 :
+
+(gdb) delete
+Delete all breakpoints? (y or n) y
+
+(gdb) break phase_2
+Breakpoint 3 at 0x400ea9
+(gdb) break explode_bomb
+Breakpoint 4 at 0x401438
+(gdb) run
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/Desktop/Sonam Choki/Desktop/Assignment 1/bomb002/bomb
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Public speaking is very easy. //the solution for phase_1
+Phase 1 defused. How about the next one?

@@ -1,0 +1,81 @@
+b phase_4
+b explode_bomb
+input : 3 4
+Dump of assembler code for function phase_4:
+=> 0x000000000040100e <+0>:	sub    $0x18,%rsp			//allocate 18 bytes on stack
+   0x0000000000401012 <+4>:	mov    %fs:0x28,%rax
+   0x000000000040101b <+13>:	mov    %rax,0x8(%rsp)
+   0x0000000000401020 <+18>:	xor    %eax,%eax
+   0x0000000000401022 <+20>:	mov    %rsp,%rcx
+   0x0000000000401025 <+23>:	lea    0x4(%rsp),%rdx
+   0x000000000040102a <+28>:	mov    $0x4025b7,%esi			//Format of input - " %d %d " 
+   0x000000000040102f <+33>:	call   0x400bb0 <__isoc99_sscanf@plt>	
+   0x0000000000401034 <+38>:	cmp    $0x2,%eax			//checks if the input is two numbers or not
+   0x0000000000401037 <+41>:	jne    0x401044 <phase_4+54>		//jump if not equal - explode bomb
+   0x0000000000401039 <+43>:	mov    (%rsp),%eax			// %rsp contains my second input i.e 4 and move it to %eax
+   0x000000000040103c <+46>:	sub    $0x2,%eax			//%eax = eax - 2
+   0x000000000040103f <+49>:	cmp    $0x2,%eax			//compare 2 with %eax i.e 2
+   0x0000000000401042 <+52>:	jbe    0x401049 <phase_4+59>		//jump below or equal, else explode bomb
+   0x0000000000401044 <+54>:	call   0x401438 <explode_bomb>
+   0x0000000000401049 <+59>:	mov    (%rsp),%esi			//Value of %rsp i.e 4- my second input will move to %esi
+   0x000000000040104c <+62>:	mov    $0x5,%edi			//5 is stored in edi
+   0x0000000000401051 <+67>:	call   0x400fd3 <func4>	
+   0x0000000000401056 <+72>:	cmp    0x4(%rsp),%eax			//check if the return value of <func4> is equal to 0x4(%rsp) & 0x4(%rsp) contains my first input i.e 3
+   0x000000000040105a <+76>:	je     0x401061 <phase_4+83>		//jump equal - else explode bomb
+   0x000000000040105c <+78>:	call   0x401438 <explode_bomb>
+   0x0000000000401061 <+83>:	mov    0x8(%rsp),%rax
+--Type <RET> for more, q to quit, c to continue without paging--
+   0x0000000000401066 <+88>:	xor    %fs:0x28,%rax
+   0x000000000040106f <+97>:	je     0x401076 <phase_4+104>
+   0x0000000000401071 <+99>:	call   0x400b00 <__stack_chk_fail@plt>
+   0x0000000000401076 <+104>:	add    $0x18,%rsp
+   0x000000000040107a <+108>:	ret    
+
+Dump of assembler code for function func4:
+=> 0x0000000000400fd3 <+0>:	test   %edi,%edi			//comparing the value of %edi i.e 5 with 0
+   0x0000000000400fd5 <+2>:	jle    0x401002 <func4+47>		//jump less or equal else execute next instruction
+   0x0000000000400fd7 <+4>:	mov    %esi,%eax			// eax = 4
+   0x0000000000400fd9 <+6>:	cmp    $0x1,%edi			// compare value of %edi with 1
+   0x0000000000400fdc <+9>:	je     0x40100c <func4+57>		
+   0x0000000000400fde <+11>:	push   %r12
+   0x0000000000400fe0 <+13>:	push   %rbp
+   0x0000000000400fe1 <+14>:	push   %rbx
+   0x0000000000400fe2 <+15>:	mov    %esi,%ebp			//ebp = 4
+   0x0000000000400fe4 <+17>:	mov    %edi,%ebx			//ebx = 5
+   0x0000000000400fe6 <+19>:	lea    -0x1(%rdi),%edi			//edi = 5-1
+   0x0000000000400fe9 <+22>:	call   0x400fd3 <func4>
+   0x0000000000400fee <+27>:	lea    0x0(%rbp,%rax,1),%r12d 		//r12d = 0+4+4*1
+   0x0000000000400ff3 <+32>:	lea    -0x2(%rbx),%edi			//edi = 5-2
+   0x0000000000400ff6 <+35>:	mov    %ebp,%esi			//esi =4
+   0x0000000000400ff8 <+37>:	call   0x400fd3 <func4>
+   0x0000000000400ffd <+42>:	add    %r12d,%eax			// eax = 16+4
+   0x0000000000401000 <+45>:	jmp    0x401008 <func4+53>
+   0x0000000000401002 <+47>:	mov    $0x0,%eax			//eax = 0
+   0x0000000000401007 <+52>:	ret    
+   0x0000000000401008 <+53>:	pop    %rbx
+   0x0000000000401009 <+54>:	pop    %rbp
+   0x000000000040100a <+55>:	pop    %r12
+   0x000000000040100c <+57>:	repz ret 				//return eax
+End of assembler dump.
+
+code for func4();
+func4(edi,esi){
+   if(rdi<=0) return 0;
+   eax = esi
+   
+   if (edi != 1 ) {
+   ebp = esi
+   ebx = edi
+   edi = rdi -1
+   func4(edi,esi)
+   r12d = rbp +rax
+   edi = rbx - 2
+   esi = ebp
+   func4(rdi,esi)
+   eax = eax +r12d
+   }
+ }
+ return eax;
+ 
+ solution : 48 4
+ From the solution, we see that the first user input is determined by the second user input by multiplying it with 12 but the second input should be less than 5. 
